@@ -1,2 +1,21 @@
 * { box-sizing: border-box;}
 
+
+main {
+  width: 1240px;
+  margin: 3rem auto;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 6.5rem 10rem 20rem;
+  20 
+
+  
+}
+body{
+  background-color: rgb(13, 228, 149);
+}
+.container{
+  border: 1px solid black
+  display; grid
+ 
+}
