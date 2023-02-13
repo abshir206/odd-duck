@@ -9,6 +9,7 @@ let myButton = document.querySelector('#button');
 let numberOfMatchesAllowed = 25;
 let numberOfMatches = 0;
 let allProducts = [];
+let indexArray = [];
 
 // constructor functions
 function Store(name, fileExtension = 'jpg') {
@@ -19,50 +20,87 @@ function Store(name, fileExtension = 'jpg') {
 }
 
 // Instances of store
-let bag = new Store('bag');
-let banana = new Store('banana');
-let bathroom = new Store('bathroom');
-let boots = new Store('boots');
-let breakfast = new Store('breakfast');
-let bubblegum = new Store('bubblegum');
-let chair = new Store('chair');
-let cthulhu = new Store('cthulhu');
-let dogduck = new Store('dog-duck');
-let dragon = new Store('dragon');
-let pen = new Store('pen');
-let petsweep = new Store('pet-sweep');
-let scissors = new Store('scissors');
-let shark = new Store('shark');
-let sweep = new Store('sweep', 'png');
-let tauntaun = new Store('tauntaun');
-let unicorn = new Store('unicorn');
-let watercan = new Store('water-can');
-let wineglass = new Store('wine-glass');
+if (!localStorage.getItem('allProducts')) {
+  let bag = new Store('bag');
+  let banana = new Store('banana');
+  let bathroom = new Store('bathroom');
+  let boots = new Store('boots');
+  let breakfast = new Store('breakfast');
+  let bubblegum = new Store('bubblegum');
+  let chair = new Store('chair');
+  let cthulhu = new Store('cthulhu');
+  let dogduck = new Store('dog-duck');
+  let dragon = new Store('dragon');
+  let pen = new Store('pen');
+  let petsweep = new Store('pet-sweep');
+  let scissors = new Store('scissors');
+  let shark = new Store('shark');
+  let sweep = new Store('sweep', 'png');
+  let tauntaun = new Store('tauntaun');
+  let unicorn = new Store('unicorn');
+  let watercan = new Store('water-can');
+  let wineglass = new Store('wine-glass');
 
-// array of products
-allProducts = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogduck, dragon, pen, petsweep, scissors, shark, sweep, tauntaun, unicorn, watercan, wineglass];
+  // array of products
+  allProducts = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogduck, dragon, pen, petsweep, scissors, shark, sweep, tauntaun, unicorn, watercan, wineglass];
+}
+else //meaning there is local storage
+{
+  let data = localStorage.getItem('allProducts');
+  allProducts = JSON.parse(data);
+  console.log(allProducts);
+}
+// Local storage code////////
 
-console.log(allProducts);
+// pack items into shed CODE into shed
+function storeProduct() {
+  let stringifiedProducts = JSON.stringify(allProducts);
+  localStorage.setItem('allProducts', stringifiedProducts);
+}
+// console.log(allProducts);
+
+
+// Put items into shed CODE into shed
+// function GrabProducts()
+// JSON.Parse(allProducts)
+
+// console.log(allProducts);
 
 function selectRandomProduct() {
   return Math.floor(Math.random() * allProducts.length);
 }
 
 function renderProducts() {
-  let product1 = selectRandomProduct();
-  let product2 = selectRandomProduct();
-  let product3 = selectRandomProduct();
 
-  while (product1 === product2 || product1 === product3 || product2 === product3) {
-    if (product1 === product2) {
-      product2 = selectRandomProduct();
+  while (indexArray.length < 6) {
+    let ranNum = selectRandomProduct();
+    // console.log(ranNum);
+    if (!indexArray.includes(ranNum)) {
+      indexArray.push(ranNum);
     }
-    else if (product1 === product3 || product2 === product3) {
-      product3 = selectRandomProduct();
-    }
-
   }
-  console.log(product1, product2, product3);
+
+  let product1 = indexArray.shift();
+  let product2 = indexArray.shift();
+  let product3 = indexArray.shift();
+
+  // console.log(product1, product2, product3);
+
+  // //while loop 
+  // let product1 = selectRandomProduct();
+  // let product2 = selectRandomProduct();
+  // let product3 = selectRandomProduct();
+
+  // while (product1 === product2 || product1 === product3 || product2 === product3){
+  //   if (product1 === product2){
+  //     product2 = selectRandomProduct();
+  //   }
+  //  else if (product1 === product3 || product2 === product3){
+  //   product3 = selectRandomProduct();
+  //  }
+
+
+  // console.log(product1, product2, product3);
 
   // change the images displayed in the DOM
   imageOne.src = allProducts[product1].src;
@@ -74,9 +112,7 @@ function renderProducts() {
   allProducts[product1].views++;
   allProducts[product2].views++;
   allProducts[product3].views++;
-  allProducts[product1].likes++;
-  allProducts[product2].likes++;
-  allProducts[product3].likes++;
+
 }
 
 function renderResults() {
@@ -87,11 +123,13 @@ function renderResults() {
     results.appendChild(li);
 
   }
+  storeProduct();
+  renderChart();
 }
 
 // Event Handler
 function handleClick(event) {
-  console.log(event.target.alt);
+  // console.log(event.target.alt);
   numberOfMatches++;
   let clickedProduct = event.target.alt;
   for (let i = 0; i < allProducts.length; i++) {
@@ -108,6 +146,64 @@ function handleClick(event) {
     myButton.addEventListener('click', renderResults);
 
   }
+}
+
+function renderChart() {
+
+  let likes = [];
+  let productNames = [];
+  let views = [];
+
+  for (let i = 0; i < allProducts.length; i++) {
+    likes.push(allProducts[i].likes);
+    productNames.push(allProducts[i].name);
+    views.push(allProducts[i].views);
+  }
+
+  const ctx = document.getElementById('myChart');
+
+  let config = {
+    type: 'bar',
+    data: {
+      labels: productNames,
+      datasets: [
+        {
+          label: '# of views',
+          data: views,
+          borderWidth: 1,
+          backgroundColor: [
+            '#b6e31c'
+          ]
+        },
+
+        {
+          label: '# of votes',
+          data: likes,
+          borderWidth: 1,
+          backgroundColor: [
+            '#009CBC'
+          ]
+        }
+        // {
+        //   label: 'productNames',
+        //   data: productNames,
+        //   borderWidth: 1,
+        //   backgroundColor: [
+        //     '#009CBC'
+        //   ]
+        //   },
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
+
+  new Chart(ctx, config);
 }
 
 renderProducts();
